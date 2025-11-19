@@ -1,292 +1,176 @@
-# Hackathon #2: TechFlow Task Management - Desafío Frontend
+TechFlow Task Management
+Una aplicación web moderna para la gestión de proyectos y tareas, construida con React, TypeScript y Tailwind CSS.
 
-## Descripción General
+🚀 Características
+Autenticación segura con JWT
 
-¡Bienvenidos a la Hackathon #2 de Desarrollo Basado en Plataformas! 🎉
+Dashboard con estadísticas y métricas
 
-**TechFlow** es una startup de gestión de proyectos que necesita un dashboard web para su plataforma de administración de tareas. Los equipos pueden crear proyectos, asignar tareas, hacer seguimiento del progreso y colaborar en tiempo real. Tu trabajo es construir la **aplicación web frontend** que consume su API existente.
+Gestión de proyectos (CRUD completo)
 
-Esta solución impacta directamente a equipos de productividad en todo el mundo al proporcionar una interfaz intuitiva para la coordinación de tareas, seguimiento de plazos y colaboración en equipo.
+Gestión de tareas con filtros avanzados
 
-## Objetivo
+Interfaz responsive y moderna
 
-Construir una aplicación web interactiva y funcional usando **React + TypeScript + Tailwind CSS** que permita a los usuarios:
+Colaboración en equipo
 
-- Registrarse, iniciar sesión y gestionar su perfil
-- Visualizar un dashboard con estadísticas de proyectos y tareas
-- Crear, editar y eliminar proyectos
-- Gestionar tareas con filtros avanzados (estado, prioridad, proyecto, usuario asignado)
-- Asignar tareas a miembros del equipo
-- Ver detalles completos de proyectos y tareas
-- Colaborar con el equipo visualizando actividades y asignaciones
+🛠️ Tecnologías Utilizadas
+Frontend: React 18 + TypeScript
 
-## Autenticación y Seguridad
+Routing: React Router DOM
 
-Todas las llamadas a la API requieren un token JWT válido en el header `Authorization: Bearer <token>` para garantizar la seguridad y privacidad de los datos.
+Estilos: Tailwind CSS
 
-## Requisitos Técnicos
+HTTP Client: Axios
 
-### Stack Obligatorio
+Build Tool: Vite
 
-- React 18+ con TypeScript
-- React Router para navegación
-- Tailwind CSS para estilos
-- Axios o Fetch API para peticiones HTTP
+📋 Prerrequisitos
+Node.js 16+ instalado
 
-### Funcionalidades Clave a Implementar
+npm o yarn
 
-#### 1. Autenticación (Requerido) 🔐
+Navegador web moderno
 
-- Pantallas de Login y Registro
-- Gestión de token JWT
-- Rutas protegidas (redirección a login si no está autenticado)
-- Funcionalidad de logout
-- Visualización de perfil de usuario
+🚀 Instalación y Ejecución Local
+Sigue estos pasos para ejecutar la aplicación en tu máquina local:
 
-#### 2. Dashboard (Requerido) 📊
+1. Clonar el repositorio
+bash
+git clone <url-del-repositorio>
+cd techflow-task-management
+2. Instalar dependencias
+bash
+npm install
+3. Configurar variables de entorno (Opcional)
+Crea un archivo .env en la raíz del proyecto:
 
-- Vista general con estadísticas (total de tareas, completadas, pendientes, vencidas)
-- Acciones rápidas (crear tarea, ver proyectos)
-- Feed de actividad reciente
+env
+VITE_API_URL=https://cs2031-2025-2-hackathon-2-backend-production.up.railway.app/v1
+4. Ejecutar en modo desarrollo
+bash
+npm run dev
+La aplicación estará disponible en: http://localhost:5173
 
-#### 3. Gestión de Proyectos (Requerido) 📁
+5. Para producción
+bash
+# Build de producción
+npm run build
 
-- Listar todos los proyectos con paginación
-- Crear nuevo proyecto (modal o página separada)
-- Ver detalles de proyecto con tareas asociadas
-- Actualizar información del proyecto
-- Eliminar proyecto (con confirmación)
-- Buscar/filtrar proyectos por nombre o estado
-
-#### 4. Gestión de Tareas (Requerido) ✅
-
-- Listar tareas con múltiples filtros:
-  - Por estado (TODO, IN_PROGRESS, COMPLETED)
-  - Por prioridad (LOW, MEDIUM, HIGH, URGENT)
-  - Por proyecto
-  - Por usuario asignado
-- Crear tarea con validación de formulario
-- Actualizar tarea (estado, prioridad, descripción, fecha límite)
-- Eliminar tarea
-- Asignar tarea a miembros del equipo
-- Marcar tarea como completada
-- Ver detalles de tarea (modal o página separada)
-
-#### 5. Colaboración en Equipo (Requerido) 👥
-
-- Ver miembros del equipo
-- Ver tareas asignadas a cada miembro
-
-## Documentación de la API
-
-**URL Base:** `https://cs2031-2025-2-hackathon-2-backend-production.up.railway.app/v1`
-
-Todos los endpoints autenticados requieren el header:
-
-```
-Authorization: Bearer <jwt_token>
-```
-
-### Endpoints de Autenticación
-
-| Método | Endpoint | Descripción | Body de Petición | Respuesta |
-|--------|----------|-------------|------------------|-----------|
-| POST | `/auth/register` | Registrar nuevo usuario | `{ "email": "user@email.com", "password": "pass123", "name": "Juan Pérez" }` | `{ "message": "Usuario creado exitosamente" }` |
-| POST | `/auth/login` | Iniciar sesión | `{ "email": "user@email.com", "password": "pass123" }` | `{ "token": "jwt_token", "user": { "id": "uuid", "email": "...", "name": "..." } }` |
-| GET | `/auth/profile` | Obtener usuario actual | - | `{ "id": "uuid", "email": "...", "name": "...", "createdAt": "..." }` |
-
-### Endpoints de Proyectos 🔐
-
-| Método | Endpoint | Descripción | Body de Petición | Respuesta |
-|--------|----------|-------------|------------------|-----------|
-| GET | `/projects?page=1&limit=10&search=` | Listar proyectos (paginado) | - | `{ "projects": [...], "totalPages": 5, "currentPage": 1 }` |
-| POST | `/projects` | Crear proyecto | `{ "name": "Proyecto Alpha", "description": "...", "status": "ACTIVE" }` | `{ "id": "uuid", "name": "...", ... }` |
-| GET | `/projects/:id` | Obtener detalles de proyecto | - | `{ "id": "uuid", "name": "...", "tasks": [...] }` |
-| PUT | `/projects/:id` | Actualizar proyecto | `{ "name": "Nombre Actualizado", "status": "COMPLETED" }` | `{ "id": "uuid", ... }` |
-| DELETE | `/projects/:id` | Eliminar proyecto | - | `{ "message": "Proyecto eliminado" }` |
-
-**Estados de Proyecto:** `ACTIVE`, `COMPLETED`, `ON_HOLD`
-
-### Endpoints de Tareas 🔐
-
-| Método | Endpoint | Descripción | Query Params | Body de Petición | Respuesta |
-|--------|----------|-------------|--------------|------------------|-----------|
-| GET | `/tasks` | Listar todas las tareas | `?projectId=uuid&status=TODO&priority=HIGH&page=1&limit=20` | - | `{ "tasks": [...], "totalPages": 3 }` |
-| POST | `/tasks` | Crear tarea | - | `{ "title": "Implementar login", "description": "...", "projectId": "uuid", "priority": "HIGH", "dueDate": "2025-12-01", "assignedTo": "userId" }` | `{ "id": "uuid", ... }` |
-| GET | `/tasks/:id` | Obtener detalles de tarea | - | - | `{ "id": "uuid", "title": "...", "status": "IN_PROGRESS", ... }` |
-| PUT | `/tasks/:id` | Actualizar tarea | - | `{ "status": "COMPLETED", "priority": "MEDIUM" }` | `{ "id": "uuid", ... }` |
-| DELETE | `/tasks/:id` | Eliminar tarea | - | `{ "message": "Tarea eliminada" }` |
-| PATCH | `/tasks/:id/status` | Actualizar solo el estado de la tarea | - | `{ "status": "COMPLETED" }` | `{ "id": "uuid", "status": "COMPLETED" }` |
-
-**Estados de Tarea:** `TODO`, `IN_PROGRESS`, `COMPLETED`
-**Prioridades:** `LOW`, `MEDIUM`, `HIGH`, `URGENT`
-
-### Endpoints de Equipo 🔐 (Bonus)
-
-| Método | Endpoint | Descripción | Respuesta |
-|--------|----------|-------------|-----------|
-| GET | `/team/members` | Listar miembros del equipo | `{ "members": [{ "id": "uuid", "name": "...", "email": "..." }] }` |
-| GET | `/team/members/:id/tasks` | Obtener tareas de un miembro | `{ "tasks": [...] }` |
-
-### Códigos de Estado HTTP
-
-- `200 OK` - GET/PUT/PATCH exitoso
-- `201 Created` - POST exitoso
-- `204 No Content` - DELETE exitoso
-- `400 Bad Request` - Body de petición inválido
-- `401 Unauthorized` - Token faltante o inválido
-- `403 Forbidden` - Permisos insuficientes
-- `404 Not Found` - Recurso no encontrado
-- `500 Internal Server Error` - Error del servidor
-
-## Orden de Implementación Sugerido
-
-### Fase 1: Fundamentos (30 min)
-
-1. Configurar routing (React Router)
-2. Crear páginas de autenticación (Login/Registro)
-3. Implementar almacenamiento de JWT (localStorage/context)
-4. Crear wrapper de rutas protegidas
-5. Configurar instancia de Axios con interceptores
-
-### Fase 2: Funcionalidades Core (60 min)
-
-1. Dashboard con estadísticas
-2. Lista de proyectos con paginación
-3. Operaciones CRUD de proyectos
-4. Lista de tareas con filtrado básico
-5. Operaciones CRUD de tareas
-
-### Fase 3: Pulido (30 min)
-
-1. Filtrado avanzado (estado, prioridad, búsqueda)
-2. Validación de formularios
-3. Estados de carga y manejo de errores
-4. Mejoras de UI y diseño responsive
-5. Funcionalidades de equipo
-
-## Consejos para el Desarrollo
-
-1. **Comienza con la autenticación** - Todo depende de ella
-2. **Crea componentes reutilizables** - Button, Input, Modal, Card, etc.
-3. **Usa React Context o custom hooks** para el estado de autenticación
-4. **Maneja estados de carga y error** en todas partes
-5. **Implementa actualizaciones optimistas de UI** para mejor UX
-6. **Usa variables de entorno** para la URL de la API
-7. **Agrega interfaces de TypeScript** para todas las respuestas de la API
-8. **Prueba casos extremos** (estados vacíos, errores, texto largo)
-
-### Estructura de Proyecto Sugerida
-
-```
+# Preview del build
+npm run preview
+📁 Estructura del Proyecto
+text
 src/
-├── components/
-│   ├── common/
-│   │   ├── Button.tsx
-│   │   ├── Input.tsx
-│   │   ├── Modal.tsx
-│   │   └── Card.tsx
-│   ├── auth/
-│   │   ├── LoginForm.tsx
-│   │   └── RegisterForm.tsx
-│   ├── projects/
-│   │   ├── ProjectList.tsx
-│   │   ├── ProjectCard.tsx
-│   │   └── ProjectForm.tsx
-│   └── tasks/
-│       ├── TaskList.tsx
-│       ├── TaskCard.tsx
-│       └── TaskForm.tsx
-├── pages/
-│   ├── Login.tsx
-│   ├── Register.tsx
-│   ├── Dashboard.tsx
-│   ├── Projects.tsx
-│   └── Tasks.tsx
-├── services/
-│   ├── api.ts
-│   ├── authService.ts
-│   ├── projectService.ts
-│   └── taskService.ts
-├── context/
-│   └── AuthContext.tsx
-├── hooks/
-│   ├── useAuth.ts
-│   └── useApi.ts
-├── types/
-│   └── index.ts
-└── utils/
-    └── constants.ts
-```
+├── components/          # Componentes reutilizables
+│   ├── common/         # Componentes comunes (Button, Input, Modal)
+│   ├── auth/           # Componentes de autenticación
+│   ├── projects/       # Componentes de proyectos
+│   └── tasks/          # Componentes de tareas
+├── pages/              # Páginas de la aplicación
+├── services/           # Servicios API
+├── context/            # Context de React (Auth)
+├── hooks/              # Custom hooks
+├── types/              # Definiciones de TypeScript
+└── utils/              # Utilidades y constantes
+🔑 Credenciales de Prueba
+Puedes registrar un nuevo usuario o usar estas credenciales de prueba (si están disponibles):
 
-## Recursos Útiles
+text
+Email: demo@techflow.com
+Password: demodemo123
+🎯 Funcionalidades Implementadas
+✅ Autenticación
+Registro de usuario
 
-- [React Documentation](https://react.dev/)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-- [React Router](https://reactrouter.com/)
-- [Axios](https://axios-http.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [JWT Introduction](https://jwt.io/introduction/)
+Inicio de sesión
 
-## Funcionalidades Bonus (Puntos Extra)
+Rutas protegidas
 
-- 🌙 Toggle de modo oscuro
-- 🎯 Drag & drop de tareas para cambiar estado
-- 🔄 Actualizaciones en tiempo real (polling cada 5s)
-- 📊 Exportar tareas a CSV
-- 💬 Sistema de comentarios en tareas
-- 🔔 Notificaciones para fechas límite
-- 📈 Dashboard de analíticas avanzado
-- 🔍 Búsqueda global (proyectos + tareas)
-- 📎 Adjuntar archivos a tareas
-- 🏷️ Sistema de etiquetas/tags para tareas
+Manejo de tokens JWT
 
-## Entregables
+✅ Dashboard
+Estadísticas de proyectos y tareas
 
-1. ✅ Repositorio público en GitHub con código completo
-2. ✅ README con instrucciones para correr la app localmente
-3. ✅ Link al deploy (Vercel, Netlify, etc.)
-4. ✅ (Opcional) Video demo mostrando la app funcionando (2-3 min)
+Progreso general
 
-### Contenido Mínimo del README
+Tareas recientes
 
-Tu README debe incluir:
+Proyectos recientes
 
-- Descripción breve del proyecto
-- Instrucciones de instalación (`npm install`)
-- Instrucciones para correr localmente (`npm run dev`)
-- Link al deploy
-- Tecnologías utilizadas
-- Credenciales de prueba (si aplica)
-- Features implementadas
-- (Opcional) Screenshots de la aplicación
+✅ Gestión de Proyectos
+Listar proyectos
 
-## Restricciones y Consideraciones Importantes
+Crear nuevo proyecto
 
-⚠️ **Importante:**
+Editar proyecto
 
-- Este proyecto es exclusivamente para plataforma web
-- Deberán usar **React** con **TypeScript** obligatoriamente
-- **Tailwind CSS** es requerido para los estilos
-- No se permite el uso de librerías de componentes completas (Material-UI, Ant Design, etc.) - deben construir sus propios componentes
-- La API está preconfigurada y lista para usar como "caja negra"
-- El tiempo máximo es de **2 horas**
-- Trabajarán en equipos de **4-5 estudiantes**
+Eliminar proyecto
 
-## Notas Finales
+Ver detalles
 
-Esta hackathon está diseñada para evaluar su capacidad de:
+✅ Gestión de Tareas
+Listar tareas con paginación
 
-- Integrar múltiples endpoints de una API REST
-- Manejar autenticación y autorización
-- Construir interfaces dinámicas y responsivas
-- Gestionar estados complejos en React
-- Trabajar bajo presión de tiempo
-- Aplicar buenas prácticas de código
+Crear tarea
 
-¡Estamos emocionados de ver lo que construirán! 🚀
+Editar tarea
 
-Para dudas o soporte durante la hackathon, utilicen el canal oficial de Discord.
+Eliminar tarea
 
-**Con cariño,**
-**El equipo de CS2031** ❤️
+Cambiar estado de tarea
+
+Filtros avanzados (estado, prioridad, proyecto)
+
+Búsqueda de tareas
+
+✅ UI/UX
+Diseño responsive
+
+Estados de carga
+
+Manejo de errores
+
+Validación de formularios
+
+Navegación intuitiva
+
+🔧 Scripts Disponibles
+bash
+npm run dev          # Ejecutar en modo desarrollo
+npm run build        # Build para producción
+npm run preview      # Preview del build de producción
+npm run lint         # Ejecutar ESLint
+🌐 API Backend
+La aplicación consume la API en:
+
+text
+https://cs2031-2025-2-hackathon-2-backend-production.up.railway.app/v1
+🐛 Solución de Problemas
+Error de CORS
+Si encuentras errores de CORS, verifica que el backend tenga configurado el origen correcto.
+
+Problemas de autenticación
+Limpia el localStorage
+
+Verifica que el token JWT sea válido
+
+Revisa la conexión con el backend
+
+Errores de build
+Ejecuta npm install nuevamente
+
+Verifica que todas las dependencias estén instaladas
+
+Revisa la configuración de TypeScript
+
+📞 Soporte
+Si encuentras problemas al ejecutar la aplicación:
+
+Verifica que Node.js esté instalado correctamente
+
+Ejecuta npm install para reinstalar dependencias
+
+Revisa la consola del navegador para errores específicos
+
+Asegúrate de tener conexión a internet para consumir la API
