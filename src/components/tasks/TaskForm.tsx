@@ -1,5 +1,5 @@
 // src/components/tasks/TaskForm.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { Task, Project } from '../../types';
 import Input from '../common/Input';
 import Button from '../common/Button';
@@ -37,20 +37,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, projects, onSubmit, onCancel,
       }
     }
   });
-
-  useEffect(() => {
-    if (task) {
-      const taskData = {
-        title: task.title,
-        description: task.description || '',
-        projectId: task.projectId,
-        priority: task.priority,
-        dueDate: task.dueDate.split('T')[0],
-        assignedTo: task.assignedTo || ''
-      };
-      setFormData(taskData);
-    }
-  }, [task]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
