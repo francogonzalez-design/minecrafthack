@@ -1,7 +1,8 @@
 // src/context/AuthContext.tsx
-import React,{ createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { authService } from '../services/authService';
+import { testBackendConnection } from '../services/api';
 import type { User } from '../types';
 import { TOKEN_KEY } from '../utils/constants';
 
@@ -12,6 +13,7 @@ interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
+  backendConnected: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,9 +22,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem(TOKEN_KEY));
   const [loading, setLoading] = useState(true);
+  const [backendConnected, setBackendConnected] = useState(false);
 
   useEffect(() => {
     const initializeAuth = async () => {
+      // Primero probar conexión con el backend
+      try {
+        const connected = await testBackendConnection();
+        setBackendConnected(connected);
+      } catch (error) {
+        console.error('Backend no disponible:', error);
+        setBackendConnected(false);
+      }
+
+      // Luego inicializar autenticación
       const storedToken = localStorage.getItem(TOKEN_KEY);
       
       if (storedToken) {
@@ -31,6 +44,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setUser(userProfile);
           setToken(storedToken);
         } catch (error) {
+          console.error('Error cargando perfil:', error);
           localStorage.removeItem(TOKEN_KEY);
           setToken(null);
         }
@@ -58,7 +72,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     setUser(null);
     setToken(null);
-    authService.logout();
+    localStorage.removeItem(TOKEN_KEY);
   };
 
   const value = {
@@ -67,10 +81,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     login,
     register,
     logout,
-    loading
+    loading,
+    backendConnected
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

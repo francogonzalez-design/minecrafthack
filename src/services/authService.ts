@@ -1,6 +1,6 @@
 // src/services/authService.ts
 import { api } from './api';
-import type { User, LoginResponse } from '../types';
+import type  { User, LoginResponse } from '../types';
 
 export const authService = {
   async login(email: string, password: string): Promise<LoginResponse> {
@@ -19,6 +19,6 @@ export const authService = {
   },
 
   logout(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem('techflow_token');
   }
 };

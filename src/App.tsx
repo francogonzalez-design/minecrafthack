@@ -1,9 +1,9 @@
 // src/App.tsx
-
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Header from './components/layout/Header';
+import BackendStatus from './components/common/BackendStatus';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -25,13 +25,14 @@ function App() {
             <ProtectedRoute>
               <div className="min-h-screen bg-gray-50">
                 <Header />
+                <BackendStatus />
                 <main>
                   <Routes>
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/tasks" element={<Tasks />} />
-                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
                     <Route path="/team" element={<Team />} />
+                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   </Routes>
                 </main>
               </div>

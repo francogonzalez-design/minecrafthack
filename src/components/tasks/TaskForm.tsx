@@ -1,9 +1,8 @@
 // src/components/tasks/TaskForm.tsx
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Task, Project } from '../../types';
 import Input from '../common/Input';
 import Button from '../common/Button';
-import { useValidation } from '../../hooks/useValidation';
 
 interface TaskFormProps {
   task?: Task;
@@ -18,30 +17,66 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, projects, onSubmit, onCancel,
     title: '',
     description: '',
     projectId: '',
-    priority: 'MEDIUM' as const,
+    priority: 'MEDIUM' as 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT', // Cambio aquí
     dueDate: '',
     assignedTo: ''
   });
 
-  const { errors, validate, clearErrors } = useValidation({
-    title: { required: true, minLength: 3, maxLength: 100 },
-    description: { maxLength: 500 },
-    projectId: { required: true },
-    dueDate: { 
-      required: true,
-      custom: (value) => {
-        if (value && new Date(value) < new Date()) {
-          return 'La fecha no puede ser en el pasado';
-        }
-        return null;
-      }
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // Validar título
+    if (!formData.title.trim()) {
+      newErrors.title = 'El título es requerido';
+    } else if (formData.title.length < 3) {
+      newErrors.title = 'Mínimo 3 caracteres';
+    } else if (formData.title.length > 100) {
+      newErrors.title = 'Máximo 100 caracteres';
     }
-  });
+
+    // Validar descripción
+    if (formData.description.length > 500) {
+      newErrors.description = 'Máximo 500 caracteres';
+    }
+
+    // Validar proyecto
+    if (!formData.projectId) {
+      newErrors.projectId = 'Selecciona un proyecto';
+    }
+
+    // Validar fecha
+    if (!formData.dueDate) {
+      newErrors.dueDate = 'La fecha límite es requerida';
+    } else if (new Date(formData.dueDate) < new Date()) {
+      newErrors.dueDate = 'La fecha no puede ser en el pasado';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const clearErrors = () => setErrors({});
+
+  useEffect(() => {
+    if (task) {
+      const taskData = {
+        title: task.title,
+        description: task.description || '',
+        projectId: task.projectId,
+        priority: task.priority,
+        dueDate: task.dueDate.split('T')[0],
+        assignedTo: task.assignedTo || ''
+      };
+      setFormData(taskData);
+    }
+  }, [task]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validate(formData)) {
+    if (!validateForm()) {
       return;
     }
 
@@ -62,7 +97,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, projects, onSubmit, onCancel,
     
     // Clear error when user starts typing
     if (errors[name]) {
-      clearErrors();
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
     }
   };
 
